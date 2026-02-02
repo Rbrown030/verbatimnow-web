@@ -1,75 +1,45 @@
-const money = (n) => `$${n.toFixed(2)}`;
+document.addEventListener("DOMContentLoaded", () => {
+  // 1) Year in footer
+  const yearEl = document.getElementById("year");
+  if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-function wireCalculator(inputId, outIds = []) {
-  const input = document.getElementById(inputId);
-  if (!input) return;
+  // 2) Mobile menu toggle
+  const hamburger = document.querySelector(".hamburger");
+  const mobileMenu = document.querySelector(".mobileMenu");
 
-  const update = () => {
-    const minutes = Math.max(1, Number(input.value || 1));
-    const subtotal = minutes * 0.5;
-
-    // mirror minutes across both inputs if both exist
-    const otherId = inputId === "minutes" ? "qty" : "minutes";
-    const other = document.getElementById(otherId);
-    if (other && Number(other.value) !== minutes) other.value = minutes;
-
-    const subtotalEl = document.getElementById("subtotal");
-    const totalEl = document.getElementById("total");
-    if (subtotalEl) subtotalEl.textContent = money(subtotal);
-    if (totalEl) totalEl.textContent = money(subtotal);
-
-    // any extra outputs passed
-    outIds.forEach((id) => {
-      const el = document.getElementById(id);
-      if (el) el.textContent = money(subtotal);
+  if (hamburger && mobileMenu) {
+    hamburger.addEventListener("click", () => {
+      const isOpen = hamburger.getAttribute("aria-expanded") === "true";
+      hamburger.setAttribute("aria-expanded", String(!isOpen));
+      mobileMenu.hidden = isOpen;
     });
-  };
 
-  input.addEventListener("input", update);
-  update();
-}
-
-function revealOnScroll() {
-  const items = document.querySelectorAll(".reveal");
-  const obs = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((e) => {
-        if (e.isIntersecting) e.target.classList.add("show");
+    // Close menu when clicking a link
+    mobileMenu.querySelectorAll("a").forEach(a => {
+      a.addEventListener("click", () => {
+        hamburger.setAttribute("aria-expanded", "false");
+        mobileMenu.hidden = true;
       });
-    },
-    { threshold: 0.12 }
-  );
-  items.forEach((el) => obs.observe(el));
-}
-
-function mobileMenu() {
-  const btn = document.querySelector(".hamburger");
-  const menu = document.querySelector(".mobileMenu");
-  if (!btn || !menu) return;
-
-  btn.addEventListener("click", () => {
-    const open = menu.hasAttribute("hidden") ? false : true;
-    if (open) {
-      menu.setAttribute("hidden", "");
-      btn.setAttribute("aria-expanded", "false");
-    } else {
-      menu.removeAttribute("hidden");
-      btn.setAttribute("aria-expanded", "true");
-    }
-  });
-
-  menu.querySelectorAll("a").forEach((a) => {
-    a.addEventListener("click", () => {
-      menu.setAttribute("hidden", "");
-      btn.setAttribute("aria-expanded", "false");
     });
-  });
-}
+  }
 
-document.getElementById("year").textContent = new Date().getFullYear();
+  // 3) Reveal animations (this is the part that fixes your ghost/blur)
+  const items = Array.from(document.querySelectorAll(".reveal"));
 
-wireCalculator("minutes");
-wireCalculator("qty");
+  // Failsafe: if IntersectionObserver is missing, just show everything.
+  if (!("IntersectionObserver" in window)) {
+    items.forEach(el => el.classList.add("show"));
+    return;
+  }
 
-revealOnScroll();
-mobileMenu();
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("show");
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+
+  items.forEach(el => io.observe(el));
+});
