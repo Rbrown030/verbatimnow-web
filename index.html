@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="en">
 <head>
@@ -15,20 +14,20 @@
 <body>
   <header class="header">
     <div class="container nav">
-      <a class="brand" href="#top" aria-label="Verbatim Now">
+      <a class="brand" href="/index.html" aria-label="Verbatim Now">
         <img class="brandLogo" src="logo.png" alt="Verbatim Now" />
       </a>
 
       <nav class="links" aria-label="Primary">
-        <a href="#pricing">Pricing</a>
+        <a href="/pricing.html">Pricing</a>
         <a href="#how">How it works</a>
         <a href="#reviews">Reviews</a>
         <a href="#faq">FAQ</a>
       </nav>
 
       <div class="navCtas">
-        <a class="btn ghost" href="#pricing">See pricing</a>
-        <a class="btn" href="#get-started">Get started</a>
+        <a class="btn ghost" href="/pricing.html">See pricing</a>
+        <a class="btn" href="/upload.html">Get started</a>
       </div>
 
       <button class="hamburger" aria-label="Open menu" aria-expanded="false">
@@ -37,11 +36,11 @@
     </div>
 
     <div class="mobileMenu" hidden>
-      <a href="#pricing">Pricing</a>
+      <a href="/pricing.html">Pricing</a>
       <a href="#how">How it works</a>
       <a href="#reviews">Reviews</a>
       <a href="#faq">FAQ</a>
-      <a class="btn" href="#get-started">Get started</a>
+      <a class="btn" href="/upload.html">Get started</a>
     </div>
   </header>
 
@@ -60,7 +59,7 @@
           </p>
 
           <div class="ctaRow">
-            <a class="btn big" href="#get-started">Upload & transcribe</a>
+            <a class="btn big" href="/upload.html">Upload & transcribe</a>
             <a class="btn ghost big" href="#how">See how it works</a>
           </div>
 
@@ -75,14 +74,13 @@
           <div class="cardTop">
             <div>
               <div class="cardTitle">Quick estimate</div>
-              <div class="cardHint">Set quantity = total minutes</div>
+              <div class="cardHint">Select a file to auto-calculate minutes</div>
             </div>
             <div class="priceBadge">$0.50/min</div>
           </div>
 
           <div class="calc">
             <label for="fileInput">Upload a file to auto-calculate minutes</label>
-
             <input id="fileInput" type="file" accept="audio/*,video/*" />
 
             <div class="calcRow">
@@ -112,10 +110,12 @@
             </button>
 
             <div class="micro" id="hint">
-              Select an audio/video file and we’ll calculate the exact price before you pay.
+              Select a file and we’ll calculate the exact price before you pay.
             </div>
           </div>
         </div>
+      </div>
+
       <div class="heroGlow" aria-hidden="true"></div>
     </section>
 
@@ -154,15 +154,15 @@
           <div class="step reveal">
             <div class="stepNum">1</div>
             <div>
-              <h3>Choose minutes</h3>
-              <p>Pricing is <strong>$0.50 per audio minute</strong>. Set quantity to your total minutes.</p>
+              <h3>Upload your file</h3>
+              <p>Select audio/video. We detect length and calculate price.</p>
             </div>
           </div>
           <div class="step reveal">
             <div class="stepNum">2</div>
             <div>
-              <h3>Upload your file</h3>
-              <p>Upload audio/video. For very large files, upload in parts.</p>
+              <h3>Pay</h3>
+              <p>Checkout securely. No hidden multipliers.</p>
             </div>
           </div>
           <div class="step reveal">
@@ -174,82 +174,12 @@
           </div>
         </div>
 
-        <div class="callout reveal" id="get-started">
+        <div class="callout reveal">
           <div>
             <h3>Ready to try it?</h3>
             <p>Start with one file and see how fast it feels.</p>
           </div>
-          <a class="btn big" href="#pricing">View pricing</a>
-        </div>
-      </div>
-    </section>
-
-    <section id="pricing" class="section">
-      <div class="container">
-        <div class="sectionHead reveal">
-          <h2>Simple pricing</h2>
-          <p>No “tier multipliers.” Just 50¢ per minute + tax.</p>
-        </div>
-
-        <div class="pricingWrap">
-          <div class="pricingCard reveal">
-            <div class="pricingTop">
-              <div>
-                <div class="plan">Transcription</div>
-                <div class="planPrice">$0.50 <span>/ audio minute</span></div>
-              </div>
-              <div class="tag">Most popular</div>
-            </div>
-
-            <ul class="list">
-              <li>✅ Upload audio or video</li>
-              <li>✅ Clean readable formatting</li>
-              <li>✅ Fast turnaround</li>
-              <li>✅ Private handling</li>
-            </ul>
-
-            <div class="qtyBox">
-              <label for="qty">Set quantity (minutes)</label>
-              <input id="qty" type="number" min="1" value="12" />
-              <div class="qtyHint">Example: 12 minutes → $6.00</div>
-            </div>
-
-            <a class="btn wide big" href="#get-started">Start now</a>
-            <div class="micro">Need captions, timestamps, speaker labels later? We can add those next.</div>
-          </div>
-
-          <div class="pricingSide reveal">
-            <div class="sideCard">
-              <h3>What counts as “minutes”?</h3>
-              <p><strong>Audio minutes</strong>. Video length counts the same as audio length.</p>
-              <div class="miniGrid">
-                <div class="mini">
-                  <div class="miniTitle">Normal audio</div>
-                  <div class="miniBody">10–60 minutes</div>
-                </div>
-                <div class="mini">
-                  <div class="miniTitle">Normal video</div>
-                  <div class="miniBody">200MB–2GB</div>
-                </div>
-                <div class="mini">
-                  <div class="miniTitle">Huge files</div>
-                  <div class="miniBody">4GB–12GB+</div>
-                </div>
-                <div class="mini">
-                  <div class="miniTitle">Huge file tip</div>
-                  <div class="miniBody">Upload in parts</div>
-                </div>
-              </div>
-            </div>
-
-            <div class="sideCard">
-              <h3>Large file uploads</h3>
-              <p>
-                If a file is too large to upload in one piece, customers can split it into parts (most people do this already).
-                We’ll provide simple instructions on the site.
-              </p>
-            </div>
-          </div>
+          <a class="btn big" href="/upload.html">Upload a file</a>
         </div>
       </div>
     </section>
@@ -300,7 +230,7 @@
           <details class="reveal">
             <summary>Can you place the upload right on the page?</summary>
             <div class="faqBody">
-              Yes — we’ll connect this site to an upload flow in :contentReference[oaicite:1]{index=1} so customers upload directly to secure storage.
+              Yes — that’s what the Upload page is for. You’ll upload first, see the price, then checkout.
             </div>
           </details>
 
@@ -327,14 +257,14 @@
         </div>
 
         <div class="footLinks">
-          <a href="#pricing">Pricing</a>
+          <a href="/pricing.html">Pricing</a>
           <a href="#how">How it works</a>
           <a href="#reviews">Reviews</a>
           <a href="#faq">FAQ</a>
         </div>
 
         <div class="micro right">
-          © <span id="year"></span> Verbatim Now • Built on :contentReference[oaicite:2]{index=2}
+          © <span id="year"></span> Verbatim Now
         </div>
       </div>
     </footer>
