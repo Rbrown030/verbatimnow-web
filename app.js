@@ -1,13 +1,9 @@
 document.addEventListener("DOMContentLoaded", () => {
-  /* -----------------------------
-     1) Footer year
-  ----------------------------- */
+  // 1) Year in footer
   const yearEl = document.getElementById("year");
   if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-  /* -----------------------------
-     2) Mobile menu toggle
-  ----------------------------- */
+  // 2) Mobile menu toggle
   const hamburger = document.querySelector(".hamburger");
   const mobileMenu = document.querySelector(".mobileMenu");
 
@@ -18,7 +14,8 @@ document.addEventListener("DOMContentLoaded", () => {
       mobileMenu.hidden = isOpen;
     });
 
-    mobileMenu.querySelectorAll("a").forEach(a => {
+    // Close menu when clicking a link
+    mobileMenu.querySelectorAll("a").forEach((a) => {
       a.addEventListener("click", () => {
         hamburger.setAttribute("aria-expanded", "false");
         mobileMenu.hidden = true;
@@ -26,127 +23,83 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  /* -----------------------------
-     3) Reveal animations (fail-open)
-  ----------------------------- */
+  // 3) Reveal animations
   const items = Array.from(document.querySelectorAll(".reveal"));
 
+  // Failsafe: if IntersectionObserver is missing, just show everything.
   if (!("IntersectionObserver" in window)) {
-    items.forEach(el => el.classList.add("show"));
+    items.forEach((el) => el.classList.add("show"));
   } else {
-    const io = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("show");
-          io.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.15 });
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("show");
+            io.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.15 }
+    );
 
-    items.forEach(el => io.observe(el));
+    items.forEach((el) => io.observe(el));
   }
 
-  /* -----------------------------
-     4) File → duration → price
-  ----------------------------- */
-  const PRICE_PER_MINUTE = 0.50;
+  // 4) Price calculator (updates as you type)
+  const PRICE_PER_MIN = 0.5;
 
-  const fileInput  = document.getElementById("fileInput");
-  const detectedEl = document.getElementById("detected");
+  // Inputs
+  const minutesInput = document.getElementById("minutes"); // hero calculator
+  const qtyInput = document.getElementById("qty"); // pricing section
+
+  // Outputs (hero card)
   const subtotalEl = document.getElementById("subtotal");
-  const totalEl    = document.getElementById("total");
-  const startBtn   = document.getElementById("startBtn");
-  const hintEl     = document.getElementById("hint");
+  const totalEl = document.getElementById("total");
 
-  function formatMoney(n) {
+  // Optional pricing example text
+  const qtyHintEl = document.querySelector(".qtyHint");
+
+  function roundUpMinutes(n) {
+    const num = Number(n);
+    if (!Number.isFinite(num)) return 0;
+    // round up to nearest whole minute (ex: 12.1 => 13)
+    return Math.max(0, Math.ceil(num));
+  }
+
+  function money(n) {
     return `$${n.toFixed(2)}`;
   }
 
-  function formatTime(seconds) {
-    seconds = Math.round(seconds);
-    const h = Math.floor(seconds / 3600);
-    const m = Math.floor((seconds % 3600) / 60);
-    const s = seconds % 60;
-    if (h > 0) return `${h}h ${m}m ${s}s`;
-    if (m > 0) return `${m}m ${s}s`;
-    return `${s}s`;
+  function updatePrices(fromValue) {
+    const mins = roundUpMinutes(fromValue);
+    const subtotal = mins * PRICE_PER_MIN;
+
+    if (subtotalEl) subtotalEl.textContent = money(subtotal);
+    if (totalEl) totalEl.textContent = money(subtotal); // tax at checkout
+
+    if (qtyHintEl) qtyHintEl.textContent = `Example: ${mins} minutes → ${money(subtotal)}`;
+
+    // Keep both inputs synced (but don't fight the one you're actively typing in)
+    if (minutesInput && document.activeElement !== minutesInput) {
+      minutesInput.value = mins ? String(mins) : "";
+    }
+    if (qtyInput && document.activeElement !== qtyInput) {
+      qtyInput.value = mins ? String(mins) : "";
+    }
   }
 
-  function resetEstimate(msg) {
-    if (detectedEl) detectedEl.textContent = "—";
-    if (subtotalEl) subtotalEl.textContent = "$0.00";
-    if (totalEl) totalEl.textContent = "$0.00";
-    if (startBtn) startBtn.disabled = true;
-    if (hintEl && msg) hintEl.textContent = msg;
+  function wire(el) {
+    if (!el) return;
+    ["input", "change", "keyup"].forEach((evt) =>
+      el.addEventListener(evt, () => updatePrices(el.value))
+    );
+    // enforce rounding when user leaves field
+    el.addEventListener("blur", () => updatePrices(el.value));
   }
 
-  function setEstimate(seconds) {
-    const minutesExact = seconds / 60;
-    const minutesBilled = Math.ceil(minutesExact);
-    const cost = minutesBilled * PRICE_PER_MINUTE;
+  wire(minutesInput);
+  wire(qtyInput);
 
-    detectedEl.textContent =
-      `${formatTime(seconds)} (${minutesBilled} min billed)`;
-
-    subtotalEl.textContent = formatMoney(cost);
-    totalEl.textContent    = formatMoney(cost);
-    startBtn.disabled = false;
-
-    // Save for checkout later
-    localStorage.setItem("vn_minutes", minutesBilled);
-    localStorage.setItem("vn_cost", cost);
-  }
-
-  async function getDuration(file) {
-    return new Promise((resolve, reject) => {
-      const url = URL.createObjectURL(file);
-      const media = document.createElement("video");
-      media.preload = "metadata";
-      media.src = url;
-      media.muted = true;
-
-      media.onloadedmetadata = () => {
-        URL.revokeObjectURL(url);
-        if (!media.duration || !isFinite(media.duration)) {
-          reject();
-        } else {
-          resolve(media.duration);
-        }
-      };
-
-      media.onerror = () => {
-        URL.revokeObjectURL(url);
-        reject();
-      };
-    });
-  }
-
-  if (fileInput) {
-    fileInput.addEventListener("change", async () => {
-      const file = fileInput.files?.[0];
-      if (!file) {
-        resetEstimate("Select a file to calculate price.");
-        return;
-      }
-
-      resetEstimate("Reading file length…");
-
-      try {
-        const seconds = await getDuration(file);
-        setEstimate(seconds);
-        hintEl.textContent =
-          "This is the exact price based on your file length.";
-      } catch {
-        resetEstimate(
-          "Could not read file duration. Try MP3, WAV, MP4, or MOV."
-        );
-      }
-    });
-  }
-
-  if (startBtn) {
-    startBtn.addEventListener("click", () => {
-      window.location.hash = "#pricing";
-    });
-  }
+  // Initial render on page load
+  updatePrices(minutesInput?.value ?? qtyInput?.value ?? 0);
 });
