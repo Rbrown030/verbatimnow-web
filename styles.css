@@ -40,6 +40,23 @@ a{color:inherit;text-decoration:none}
   padding:14px 0;
 }
 
+.brandLogo{
+  height: 34px;
+  width: auto;
+  display: block;
+  filter: drop-shadow(0 10px 25px rgba(0,0,0,.25));
+}
+
+@media (min-width: 981px){
+  .brandLogo{ height: 38px; }
+}
+
+
+.brandText{
+  letter-spacing: .2px;
+}
+
+
 .brand{display:flex; align-items:center; gap:10px; font-weight:800}
 .brandMark{
   width:36px;height:36px;border-radius:10px;
@@ -338,10 +355,10 @@ h1{
 .right{text-align:right}
 
 .reveal{
-  opacity:0;
-  transform: translateY(14px);
-  transition: opacity .55s ease, transform .55s ease;
+  opacity:1;
+  transform:none;
 }
+
 .reveal.show{
   opacity:1;
   transform: translateY(0);
