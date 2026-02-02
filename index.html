@@ -81,35 +81,41 @@
           </div>
 
           <div class="calc">
-            <label for="minutes">Minutes</label>
-            <input id="minutes" type="number" min="1" value="12" />
+            <label for="fileInput">Upload a file to auto-calculate minutes</label>
+
+            <input id="fileInput" type="file" accept="audio/*,video/*" />
+
+            <div class="calcRow">
+              <span>Detected length</span>
+              <strong id="detected">—</strong>
+            </div>
+
             <div class="calcRow">
               <span>Subtotal</span>
-              <strong id="subtotal">$6.00</strong>
+              <strong id="subtotal">$0.00</strong>
             </div>
+
             <div class="calcRow muted">
               <span>Tax</span>
               <span>Calculated at checkout</span>
             </div>
+
             <div class="divider"></div>
+
             <div class="calcRow">
               <span>Total</span>
-              <strong id="total">$6.00</strong>
+              <strong id="total">$0.00</strong>
             </div>
 
-            <div class="fileBox">
-              <div class="fileIcon">⬆️</div>
-              <div>
-                <div class="fileTitle">Upload your file</div>
-                <div class="fileSub">Audio or video • We’ll guide you at checkout</div>
-              </div>
-            </div>
+            <button class="btn wide" id="startBtn" type="button" disabled>
+              Get started
+            </button>
 
-            <a class="btn wide" href="#get-started">Get started</a>
-            <div class="micro">Tip: Large files? You can upload in parts — we’ll stitch it for you.</div>
+            <div class="micro" id="hint">
+              Select an audio/video file and we’ll calculate the exact price before you pay.
+            </div>
           </div>
         </div>
-      </div>
       <div class="heroGlow" aria-hidden="true"></div>
     </section>
 
