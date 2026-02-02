@@ -191,6 +191,31 @@ h1{
   font-weight:700;
   outline:none;
 }
+#fileInput{
+  width:100%;
+  padding:12px 12px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.14);
+  background: rgba(6,10,22,.55);
+  color:var(--text);
+  font-size:14px;
+  font-weight:700;
+  outline:none;
+}
+#fileInput::file-selector-button{
+  margin-right:12px;
+  border:1px solid rgba(255,255,255,.18);
+  background: rgba(255,255,255,.08);
+  color: var(--text);
+  border-radius:12px;
+  padding:10px 12px;
+  font-weight:800;
+  cursor:pointer;
+}
+#fileInput::file-selector-button:hover{
+  background: rgba(255,255,255,.12);
+}
+
 .calcRow{display:flex; justify-content:space-between; margin-top:10px; font-weight:750}
 .calcRow.muted{color:var(--muted); font-weight:650}
 .divider{height:1px;background:var(--line); margin:12px 0}
