@@ -1,0 +1,340 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="Verbatim Now — Automated transcription at $0.50 per audio minute. Upload audio/video, get fast, accurate transcripts." />
+  <title>Verbatim Now — Automated Transcription</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <header class="header">
+    <div class="container nav">
+      <a class="brand" href="#top" aria-label="Verbatim Now">
+        <span class="brandMark">VN</span>
+        <span class="brandText">Verbatim Now</span>
+      </a>
+
+      <nav class="links" aria-label="Primary">
+        <a href="#pricing">Pricing</a>
+        <a href="#how">How it works</a>
+        <a href="#reviews">Reviews</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+
+      <div class="navCtas">
+        <a class="btn ghost" href="#pricing">See pricing</a>
+        <a class="btn" href="#get-started">Get started</a>
+      </div>
+
+      <button class="hamburger" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+
+    <div class="mobileMenu" hidden>
+      <a href="#pricing">Pricing</a>
+      <a href="#how">How it works</a>
+      <a href="#reviews">Reviews</a>
+      <a href="#faq">FAQ</a>
+      <a class="btn" href="#get-started">Get started</a>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="container heroGrid">
+        <div class="heroCopy reveal">
+          <div class="pill">
+            <span class="dot"></span>
+            Automated transcription • $0.50 / audio minute
+          </div>
+          <h1>Human-level transcription at AI speed.</h1>
+          <p class="sub">
+            Upload audio or video and receive a clean, ready-to-use transcript in minutes — not days.
+            Simple pricing. Fast turnaround. Secure handling.
+          </p>
+
+          <div class="ctaRow">
+            <a class="btn big" href="#get-started">Upload & transcribe</a>
+            <a class="btn ghost big" href="#how">See how it works</a>
+          </div>
+
+          <div class="trustRow">
+            <div class="trustItem">✅ Fast turnaround</div>
+            <div class="trustItem">✅ Clear, formatted output</div>
+            <div class="trustItem">✅ Secure & confidential</div>
+          </div>
+        </div>
+
+        <div class="heroCard reveal">
+          <div class="cardTop">
+            <div>
+              <div class="cardTitle">Quick estimate</div>
+              <div class="cardHint">Set quantity = total minutes</div>
+            </div>
+            <div class="priceBadge">$0.50/min</div>
+          </div>
+
+          <div class="calc">
+            <label for="minutes">Minutes</label>
+            <input id="minutes" type="number" min="1" value="12" />
+            <div class="calcRow">
+              <span>Subtotal</span>
+              <strong id="subtotal">$6.00</strong>
+            </div>
+            <div class="calcRow muted">
+              <span>Tax</span>
+              <span>Calculated at checkout</span>
+            </div>
+            <div class="divider"></div>
+            <div class="calcRow">
+              <span>Total</span>
+              <strong id="total">$6.00</strong>
+            </div>
+
+            <div class="fileBox">
+              <div class="fileIcon">⬆️</div>
+              <div>
+                <div class="fileTitle">Upload your file</div>
+                <div class="fileSub">Audio or video • We’ll guide you at checkout</div>
+              </div>
+            </div>
+
+            <a class="btn wide" href="#get-started">Get started</a>
+            <div class="micro">Tip: Large files? You can upload in parts — we’ll stitch it for you.</div>
+          </div>
+        </div>
+      </div>
+      <div class="heroGlow" aria-hidden="true"></div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="sectionHead reveal">
+          <h2>Why people choose Verbatim Now</h2>
+          <p>Clean transcripts that feel “done” — not messy.</p>
+        </div>
+
+        <div class="grid3">
+          <article class="feature reveal">
+            <h3>⚡ Fast turnaround</h3>
+            <p>Results in minutes for most files. No waiting days.</p>
+          </article>
+          <article class="feature reveal">
+            <h3>🎯 High accuracy</h3>
+            <p>Clear audio gets excellent results. We optimize for readability.</p>
+          </article>
+          <article class="feature reveal">
+            <h3>🔒 Secure & confidential</h3>
+            <p>Your files are handled privately. Links expire and access is controlled.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="how" class="section alt">
+      <div class="container">
+        <div class="sectionHead reveal">
+          <h2>How it works</h2>
+          <p>Simple flow. No weird fees.</p>
+        </div>
+
+        <div class="steps">
+          <div class="step reveal">
+            <div class="stepNum">1</div>
+            <div>
+              <h3>Choose minutes</h3>
+              <p>Pricing is <strong>$0.50 per audio minute</strong>. Set quantity to your total minutes.</p>
+            </div>
+          </div>
+          <div class="step reveal">
+            <div class="stepNum">2</div>
+            <div>
+              <h3>Upload your file</h3>
+              <p>Upload audio/video. For very large files, upload in parts.</p>
+            </div>
+          </div>
+          <div class="step reveal">
+            <div class="stepNum">3</div>
+            <div>
+              <h3>Get your transcript</h3>
+              <p>We deliver a clean transcript you can copy, edit, or download.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout reveal" id="get-started">
+          <div>
+            <h3>Ready to try it?</h3>
+            <p>Start with one file and see how fast it feels.</p>
+          </div>
+          <a class="btn big" href="#pricing">View pricing</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="pricing" class="section">
+      <div class="container">
+        <div class="sectionHead reveal">
+          <h2>Simple pricing</h2>
+          <p>No “tier multipliers.” Just 50¢ per minute + tax.</p>
+        </div>
+
+        <div class="pricingWrap">
+          <div class="pricingCard reveal">
+            <div class="pricingTop">
+              <div>
+                <div class="plan">Transcription</div>
+                <div class="planPrice">$0.50 <span>/ audio minute</span></div>
+              </div>
+              <div class="tag">Most popular</div>
+            </div>
+
+            <ul class="list">
+              <li>✅ Upload audio or video</li>
+              <li>✅ Clean readable formatting</li>
+              <li>✅ Fast turnaround</li>
+              <li>✅ Private handling</li>
+            </ul>
+
+            <div class="qtyBox">
+              <label for="qty">Set quantity (minutes)</label>
+              <input id="qty" type="number" min="1" value="12" />
+              <div class="qtyHint">Example: 12 minutes → $6.00</div>
+            </div>
+
+            <a class="btn wide big" href="#get-started">Start now</a>
+            <div class="micro">Need captions, timestamps, speaker labels later? We can add those next.</div>
+          </div>
+
+          <div class="pricingSide reveal">
+            <div class="sideCard">
+              <h3>What counts as “minutes”?</h3>
+              <p><strong>Audio minutes</strong>. Video length counts the same as audio length.</p>
+              <div class="miniGrid">
+                <div class="mini">
+                  <div class="miniTitle">Normal audio</div>
+                  <div class="miniBody">10–60 minutes</div>
+                </div>
+                <div class="mini">
+                  <div class="miniTitle">Normal video</div>
+                  <div class="miniBody">200MB–2GB</div>
+                </div>
+                <div class="mini">
+                  <div class="miniTitle">Huge files</div>
+                  <div class="miniBody">4GB–12GB+</div>
+                </div>
+                <div class="mini">
+                  <div class="miniTitle">Huge file tip</div>
+                  <div class="miniBody">Upload in parts</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="sideCard">
+              <h3>Large file uploads</h3>
+              <p>
+                If a file is too large to upload in one piece, customers can split it into parts (most people do this already).
+                We’ll provide simple instructions on the site.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="reviews" class="section alt">
+      <div class="container">
+        <div class="sectionHead reveal">
+          <h2>Reviews</h2>
+          <p>Social proof builds trust. We’ll replace these with real reviews as you get them.</p>
+        </div>
+
+        <div class="grid3">
+          <article class="review reveal">
+            <div class="stars">★★★★★</div>
+            <p>“Super fast. Transcript was clean and usable right away.”</p>
+            <div class="by">— Small business owner</div>
+          </article>
+          <article class="review reveal">
+            <div class="stars">★★★★★</div>
+            <p>“Pricing is straightforward. No surprises.”</p>
+            <div class="by">— Podcast editor</div>
+          </article>
+          <article class="review reveal">
+            <div class="stars">★★★★★</div>
+            <p>“Way easier than emailing files back and forth.”</p>
+            <div class="by">— Student</div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="faq" class="section">
+      <div class="container">
+        <div class="sectionHead reveal">
+          <h2>FAQ</h2>
+          <p>Clear answers = more conversions.</p>
+        </div>
+
+        <div class="faq">
+          <details class="reveal" open>
+            <summary>Do I need to split large files?</summary>
+            <div class="faqBody">
+              If your file is very large (like 7–12GB), splitting is normal. We’ll give simple instructions.
+              Later, we can add an automatic “upload parts” flow.
+            </div>
+          </details>
+
+          <details class="reveal">
+            <summary>Can you place the upload right on the page?</summary>
+            <div class="faqBody">
+              Yes — we’ll connect this site to an upload flow in :contentReference[oaicite:1]{index=1} so customers upload directly to secure storage.
+            </div>
+          </details>
+
+          <details class="reveal">
+            <summary>Is $0.50/min really the price?</summary>
+            <div class="faqBody">
+              Yep. $0.50 per audio minute + tax. No hidden multipliers.
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="container footGrid">
+        <div>
+          <div class="brandFoot">
+            <span class="brandMark">VN</span>
+            <div>
+              <div class="brandText">Verbatim Now</div>
+              <div class="micro">Automated transcription — $0.50/min</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="footLinks">
+          <a href="#pricing">Pricing</a>
+          <a href="#how">How it works</a>
+          <a href="#reviews">Reviews</a>
+          <a href="#faq">FAQ</a>
+        </div>
+
+        <div class="micro right">
+          © <span id="year"></span> Verbatim Now • Built on :contentReference[oaicite:2]{index=2}
+        </div>
+      </div>
+    </footer>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
