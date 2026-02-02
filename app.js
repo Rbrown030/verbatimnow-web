@@ -1,9 +1,13 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // 1) Year in footer
+  /* -----------------------------
+     1) Footer year
+  ----------------------------- */
   const yearEl = document.getElementById("year");
   if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-  // 2) Mobile menu toggle
+  /* -----------------------------
+     2) Mobile menu toggle
+  ----------------------------- */
   const hamburger = document.querySelector(".hamburger");
   const mobileMenu = document.querySelector(".mobileMenu");
 
@@ -14,7 +18,6 @@ document.addEventListener("DOMContentLoaded", () => {
       mobileMenu.hidden = isOpen;
     });
 
-    // Close menu when clicking a link
     mobileMenu.querySelectorAll("a").forEach(a => {
       a.addEventListener("click", () => {
         hamburger.setAttribute("aria-expanded", "false");
@@ -23,23 +26,14 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // 3) Reveal animations (this is the part that fixes your ghost/blur)
+  /* -----------------------------
+     3) Reveal animations (fail-open)
+  ----------------------------- */
   const items = Array.from(document.querySelectorAll(".reveal"));
 
-  // Failsafe: if IntersectionObserver is missing, just show everything.
   if (!("IntersectionObserver" in window)) {
     items.forEach(el => el.classList.add("show"));
-    return;
-  }
+  } else {
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(
 
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add("show");
-        io.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.15 });
-
-  items.forEach(el => io.observe(el));
-});
