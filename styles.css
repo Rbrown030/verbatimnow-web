@@ -355,10 +355,10 @@ h1{
 .right{text-align:right}
 
 .reveal{
-  opacity:1;
-  transform:none;
+  opacity:0;
+  transform: translateY(14px);
+  transition: opacity .55s ease, transform .55s ease;
 }
-
 .reveal.show{
   opacity:1;
   transform: translateY(0);
