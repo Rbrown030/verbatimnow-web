@@ -14,20 +14,25 @@
 <body>
   <header class="header">
     <div class="container nav">
-      <a class="brand" href="/index.html" aria-label="Verbatim Now">
+      <a class="brand" href="#top" aria-label="Verbatim Now">
         <img class="brandLogo" src="logo.png" alt="Verbatim Now" />
       </a>
 
       <nav class="links" aria-label="Primary">
-        <a href="/pricing.html">Pricing</a>
+        <!-- Estimator -->
+        <a href="#pricing">Pricing</a>
+
+        <!-- These already work -->
         <a href="#how">How it works</a>
         <a href="#reviews">Reviews</a>
         <a href="#faq">FAQ</a>
       </nav>
 
       <div class="navCtas">
-        <a class="btn ghost" href="/pricing.html">See pricing</a>
-        <a class="btn" href="/upload.html">Get started</a>
+        <!-- Estimator -->
+        <a class="btn ghost" href="#pricing">See pricing</a>
+        <!-- Upload -->
+        <a class="btn" href="#upload">Get started</a>
       </div>
 
       <button class="hamburger" aria-label="Open menu" aria-expanded="false">
@@ -36,11 +41,16 @@
     </div>
 
     <div class="mobileMenu" hidden>
-      <a href="/pricing.html">Pricing</a>
+      <!-- Estimator -->
+      <a href="#pricing">Pricing</a>
+
+      <!-- These already work -->
       <a href="#how">How it works</a>
       <a href="#reviews">Reviews</a>
       <a href="#faq">FAQ</a>
-      <a class="btn" href="/upload.html">Get started</a>
+
+      <!-- Upload -->
+      <a class="btn" href="#upload">Get started</a>
     </div>
   </header>
 
@@ -59,22 +69,25 @@
           </p>
 
           <div class="ctaRow">
-            <a class="btn big" href="/upload.html">Upload & transcribe</a>
+            <!-- Upload -->
+            <a class="btn big" href="#upload">Upload &amp; transcribe</a>
+            <!-- Already correct -->
             <a class="btn ghost big" href="#how">See how it works</a>
           </div>
 
           <div class="trustRow">
             <div class="trustItem">✅ Fast turnaround</div>
             <div class="trustItem">✅ Clear, formatted output</div>
-            <div class="trustItem">✅ Secure & confidential</div>
+            <div class="trustItem">✅ Secure &amp; confidential</div>
           </div>
         </div>
 
-        <div class="heroCard reveal">
+        <!-- UPLOAD TARGET -->
+        <div class="heroCard reveal" id="upload">
           <div class="cardTop">
             <div>
               <div class="cardTitle">Quick estimate</div>
-              <div class="cardHint">Select a file to auto-calculate minutes</div>
+              <div class="cardHint">Upload a file and we’ll calculate exact minutes</div>
             </div>
             <div class="priceBadge">$0.50/min</div>
           </div>
@@ -105,12 +118,13 @@
               <strong id="total">$0.00</strong>
             </div>
 
-            <button class="btn wide" id="startBtn" type="button" disabled>
+            <!-- NOT disabled anymore; it will open the file picker -->
+            <button class="btn wide" id="startBtn" type="button">
               Get started
             </button>
 
             <div class="micro" id="hint">
-              Select a file and we’ll calculate the exact price before you pay.
+              Select an audio/video file and we’ll calculate the exact price before you pay.
             </div>
           </div>
         </div>
@@ -136,7 +150,7 @@
             <p>Clear audio gets excellent results. We optimize for readability.</p>
           </article>
           <article class="feature reveal">
-            <h3>🔒 Secure & confidential</h3>
+            <h3>🔒 Secure &amp; confidential</h3>
             <p>Your files are handled privately. Links expire and access is controlled.</p>
           </article>
         </div>
@@ -155,14 +169,14 @@
             <div class="stepNum">1</div>
             <div>
               <h3>Upload your file</h3>
-              <p>Select audio/video. We detect length and calculate price.</p>
+              <p>Upload audio/video. We auto-detect minutes and show the exact price.</p>
             </div>
           </div>
           <div class="step reveal">
             <div class="stepNum">2</div>
             <div>
-              <h3>Pay</h3>
-              <p>Checkout securely. No hidden multipliers.</p>
+              <h3>Checkout</h3>
+              <p>Pay for the detected minutes at <strong>$0.50/min</strong> + tax.</p>
             </div>
           </div>
           <div class="step reveal">
@@ -179,7 +193,79 @@
             <h3>Ready to try it?</h3>
             <p>Start with one file and see how fast it feels.</p>
           </div>
-          <a class="btn big" href="/upload.html">Upload a file</a>
+          <!-- Estimator -->
+          <a class="btn big" href="#pricing">View pricing</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="pricing" class="section">
+      <div class="container">
+        <div class="sectionHead reveal">
+          <h2>Simple pricing</h2>
+          <p>No “tier multipliers.” Just 50¢ per minute + tax.</p>
+        </div>
+
+        <div class="pricingWrap">
+          <div class="pricingCard reveal">
+            <div class="pricingTop">
+              <div>
+                <div class="plan">Transcription</div>
+                <div class="planPrice">$0.50 <span>/ audio minute</span></div>
+              </div>
+              <div class="tag">Most popular</div>
+            </div>
+
+            <ul class="list">
+              <li>✅ Upload audio or video</li>
+              <li>✅ Clean readable formatting</li>
+              <li>✅ Fast turnaround</li>
+              <li>✅ Private handling</li>
+            </ul>
+
+            <div class="qtyBox">
+              <label for="qty">Set quantity (minutes)</label>
+              <input id="qty" type="number" min="1" value="12" />
+              <div class="qtyHint" id="qtyHint">Example: 12 minutes → $6.00</div>
+            </div>
+
+            <!-- Upload -->
+            <a class="btn wide big" href="#upload">Start now</a>
+            <div class="micro">Need captions, timestamps, speaker labels later? We can add those next.</div>
+          </div>
+
+          <div class="pricingSide reveal">
+            <div class="sideCard">
+              <h3>What counts as “minutes”?</h3>
+              <p><strong>Audio minutes</strong>. Video length counts the same as audio length.</p>
+              <div class="miniGrid">
+                <div class="mini">
+                  <div class="miniTitle">Normal audio</div>
+                  <div class="miniBody">10–60 minutes</div>
+                </div>
+                <div class="mini">
+                  <div class="miniTitle">Normal video</div>
+                  <div class="miniBody">200MB–2GB</div>
+                </div>
+                <div class="mini">
+                  <div class="miniTitle">Huge files</div>
+                  <div class="miniBody">4GB–12GB+</div>
+                </div>
+                <div class="mini">
+                  <div class="miniTitle">Huge file tip</div>
+                  <div class="miniBody">Upload in parts</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="sideCard">
+              <h3>Large file uploads</h3>
+              <p>
+                If a file is too large to upload in one piece, customers can split it into parts.
+                We’ll provide simple instructions on the site.
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -230,7 +316,7 @@
           <details class="reveal">
             <summary>Can you place the upload right on the page?</summary>
             <div class="faqBody">
-              Yes — that’s what the Upload page is for. You’ll upload first, see the price, then checkout.
+              Yes — it’s already on this page in the “Quick estimate” box at the top.
             </div>
           </details>
 
@@ -257,14 +343,14 @@
         </div>
 
         <div class="footLinks">
-          <a href="/pricing.html">Pricing</a>
+          <a href="#pricing">Pricing</a>
           <a href="#how">How it works</a>
           <a href="#reviews">Reviews</a>
           <a href="#faq">FAQ</a>
         </div>
 
         <div class="micro right">
-          © <span id="year"></span> Verbatim Now
+          © <span id="year"></span> Verbatim Now • Built on AWS
         </div>
       </div>
     </footer>
@@ -273,3 +359,4 @@
   <script src="app.js"></script>
 </body>
 </html>
+
