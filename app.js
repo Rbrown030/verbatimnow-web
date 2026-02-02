@@ -82,11 +82,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function setEstimate(seconds) {
     const minutesExact = seconds / 60;
-    const minutesBilled = Math.round(minutesExact * 100) / 100;
+    const minutesBilled = Math.ceil(minutesExact);
     const cost = minutesBilled * PRICE_PER_MINUTE;
 
     detectedEl.textContent =
-      `${formatTime(seconds)} (${minutesBilled} min)`;
+      `${formatTime(seconds)} (${minutesBilled} min billed)`;
 
     subtotalEl.textContent = formatMoney(cost);
     totalEl.textContent    = formatMoney(cost);
