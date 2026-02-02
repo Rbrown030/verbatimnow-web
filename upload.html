@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="Upload your audio/video for transcription. We'll calculate the exact price before checkout." />
+  <title>Upload — Verbatim Now</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <header class="header">
+    <div class="container nav">
+      <a class="brand" href="/index.html" aria-label="Verbatim Now">
+        <img class="brandLogo" src="logo.png" alt="Verbatim Now" />
+      </a>
+
+      <nav class="links" aria-label="Primary">
+        <a href="/pricing.html">Pricing</a>
+        <a href="/index.html#how">How it works</a>
+        <a href="/index.html#reviews">Reviews</a>
+        <a href="/index.html#faq">FAQ</a>
+      </nav>
+
+      <div class="navCtas">
+        <a class="btn ghost" href="/pricing.html">See pricing</a>
+        <a class="btn" href="/upload.html">Get started</a>
+      </div>
+
+      <button class="hamburger" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+
+    <div class="mobileMenu" hidden>
+      <a href="/pricing.html">Pricing</a>
+      <a href="/index.html#how">How it works</a>
+      <a href="/index.html#reviews">Reviews</a>
+      <a href="/index.html#faq">FAQ</a>
+      <a class="btn" href="/upload.html">Get started</a>
+    </div>
+  </header>
+
+  <main class="section">
+    <div class="container">
+      <div class="sectionHead reveal">
+        <h2>Upload your file</h2>
+        <p>Select audio/video — we’ll calculate minutes and price automatically.</p>
+      </div>
+
+      <div class="heroCard reveal" style="max-width: 720px; margin: 0 auto;">
+        <div class="calc">
+          <label for="fileInput">Choose your audio/video file</label>
+          <input id="fileInput" type="file" accept="audio/*,video/*" />
+
+          <div class="calcRow">
+            <span>Detected length</span>
+            <strong id="detected">—</strong>
+          </div>
+
+          <div class="calcRow">
+            <span>Subtotal</span>
+            <strong id="subtotal">$0.00</strong>
+          </div>
+
+          <div class="calcRow muted">
+            <span>Tax</span>
+            <span>Calculated at checkout</span>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="calcRow">
+            <span>Total</span>
+            <strong id="total">$0.00</strong>
+          </div>
+
+          <button class="btn wide" id="startBtn" type="button" disabled>
+            Continue to checkout
+          </button>
+
+          <div class="micro" id="hint">
+            Processing begins after checkout. (Backend upload + transcription logic is the next step.)
+          </div>
+        </div>
+      </div>
+
+      <footer class="footer" style="margin-top: 48px;">
+        <div class="container footGrid">
+          <div class="micro">
+            © <span id="year"></span> Verbatim Now
+          </div>
+        </div>
+      </footer>
+    </div>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
