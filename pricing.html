@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="Verbatim Now pricing — $0.50 per audio minute + tax." />
+  <title>Pricing — Verbatim Now</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <header class="header">
+    <div class="container nav">
+      <a class="brand" href="/index.html" aria-label="Verbatim Now">
+        <img class="brandLogo" src="logo.png" alt="Verbatim Now" />
+      </a>
+
+      <nav class="links" aria-label="Primary">
+        <a href="/pricing.html">Pricing</a>
+        <a href="/index.html#how">How it works</a>
+        <a href="/index.html#reviews">Reviews</a>
+        <a href="/index.html#faq">FAQ</a>
+      </nav>
+
+      <div class="navCtas">
+        <a class="btn ghost" href="/pricing.html">See pricing</a>
+        <a class="btn" href="/upload.html">Get started</a>
+      </div>
+
+      <button class="hamburger" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+
+    <div class="mobileMenu" hidden>
+      <a href="/pricing.html">Pricing</a>
+      <a href="/index.html#how">How it works</a>
+      <a href="/index.html#reviews">Reviews</a>
+      <a href="/index.html#faq">FAQ</a>
+      <a class="btn" href="/upload.html">Get started</a>
+    </div>
+  </header>
+
+  <main class="section">
+    <div class="container">
+      <div class="sectionHead reveal">
+        <h2>Simple pricing</h2>
+        <p>No “tier multipliers.” Just 50¢ per minute + tax.</p>
+      </div>
+
+      <div class="pricingWrap">
+        <div class="pricingCard reveal">
+          <div class="pricingTop">
+            <div>
+              <div class="plan">Transcription</div>
+              <div class="planPrice">$0.50 <span>/ audio minute</span></div>
+            </div>
+            <div class="tag">Most popular</div>
+          </div>
+
+          <ul class="list">
+            <li>✅ Upload audio or video</li>
+            <li>✅ Clean readable formatting</li>
+            <li>✅ Fast turnaround</li>
+            <li>✅ Private handling</li>
+          </ul>
+
+          <div class="qtyBox">
+            <label for="qty">Set quantity (minutes)</label>
+            <input id="qty" type="number" min="1" value="12" />
+            <div class="qtyHint">Example: 12 minutes → $6.00</div>
+          </div>
+
+          <div class="calcRow">
+            <span>Subtotal</span>
+            <strong id="subtotal">$6.00</strong>
+          </div>
+
+          <div class="calcRow muted">
+            <span>Tax</span>
+            <span>Calculated at checkout</span>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="calcRow">
+            <span>Total</span>
+            <strong id="total">$6.00</strong>
+          </div>
+
+          <a class="btn wide big" id="pricingStartLink" href="/upload.html">Start now</a>
+          <div class="micro">Need captions, timestamps, speaker labels later? We can add those next.</div>
+        </div>
+
+        <div class="pricingSide reveal">
+          <div class="sideCard">
+            <h3>What counts as “minutes”?</h3>
+            <p><strong>Audio minutes</strong>. Video length counts the same as audio length.</p>
+            <div class="miniGrid">
+              <div class="mini">
+                <div class="miniTitle">Normal audio</div>
+                <div class="miniBody">10–60 minutes</div>
+              </div>
+              <div class="mini">
+                <div class="miniTitle">Normal video</div>
+                <div class="miniBody">200MB–2GB</div>
+              </div>
+              <div class="mini">
+                <div class="miniTitle">Huge files</div>
+                <div class="miniBody">4GB–12GB+</div>
+              </div>
+              <div class="mini">
+                <div class="miniTitle">Huge file tip</div>
+                <div class="miniBody">Upload in parts</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="sideCard">
+            <h3>Large file uploads</h3>
+            <p>
+              If a file is too large to upload in one piece, customers can split it into parts.
+              We’ll provide simple instructions.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <footer class="footer">
+        <div class="container footGrid">
+          <div class="micro">
+            © <span id="year"></span> Verbatim Now
+          </div>
+        </div>
+      </footer>
+    </div>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
