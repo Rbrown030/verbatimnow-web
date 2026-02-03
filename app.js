@@ -1,39 +1,44 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // ===== Constants =====
-  const PRICE_PER_MIN = 0.5;
+  // =========================
+  // SETTINGS (EDIT THESE)
+  // =========================
+  const UPLOAD_LAMBDA_URL =
+    "https://ciscm7fmbbj5c5isyf26aye7ku0sdrzu.lambda-url.us-east-2.on.aws/";
+  const PRICE_PER_MINUTE = 0.5;
 
-  // ===== Helpers =====
-  const money = (n) => {
-    const x = Number(n) || 0;
-    return `$${x.toFixed(2)}`;
-  };
+  // =========================
+  // Helpers
+  // =========================
+  const $ = (id) => document.getElementById(id);
 
-  // Round UP to nearest minute (minimum 1)
-  const roundMinutes = (seconds) => {
-    const mins = Math.ceil((Number(seconds) || 0) / 60);
-    return mins < 1 ? 1 : mins;
-  };
+  function dollars(n) {
+    return `$${Number(n || 0).toFixed(2)}`;
+  }
 
-  const formatDuration = (seconds) => {
-    const s = Math.max(0, Math.floor(Number(seconds) || 0));
-    const m = Math.floor(s / 60);
-    const r = s % 60;
-    return m > 0 ? `${m}m ${String(r).padStart(2, "0")}s` : `${r}s`;
-  };
+  function roundUpMinutes(seconds) {
+    const mins = Math.ceil((Number(seconds || 0) / 60) || 0);
+    return Math.max(1, mins);
+  }
 
-  const scrollToUpload = () => {
-    const upload = document.getElementById("upload");
-    const fileInput = document.getElementById("fileInput");
-    if (upload) upload.scrollIntoView({ behavior: "smooth", block: "start" });
-    // Focus shortly after scroll so it's obvious
-    setTimeout(() => fileInput?.focus(), 350);
-  };
+  function setText(id, text) {
+    const el = $(id);
+    if (el) el.textContent = text;
+  }
 
-  // ===== Footer year =====
-  const yearEl = document.getElementById("year");
+  function setDisabled(id, disabled) {
+    const el = $(id);
+    if (el) el.disabled = !!disabled;
+  }
+
+  // =========================
+  // 1) Year in footer
+  // =========================
+  const yearEl = $("year");
   if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-  // ===== Mobile menu toggle =====
+  // =========================
+  // 2) Mobile menu toggle
+  // =========================
   const hamburger = document.querySelector(".hamburger");
   const mobileMenu = document.querySelector(".mobileMenu");
 
@@ -52,9 +57,10 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // ===== Reveal animations (fail-open) =====
+  // =========================
+  // 3) Reveal animations
+  // =========================
   const items = Array.from(document.querySelectorAll(".reveal"));
-
   if (!("IntersectionObserver" in window)) {
     items.forEach((el) => el.classList.add("show"));
   } else {
@@ -73,68 +79,36 @@ document.addEventListener("DOMContentLoaded", () => {
     items.forEach((el) => io.observe(el));
   }
 
-  // ===== Make ALL #upload links actually go to the upload box =====
-  document.querySelectorAll('a[href="#upload"]').forEach((a) => {
-    a.addEventListener("click", (e) => {
-      e.preventDefault();
-      scrollToUpload();
-    });
-  });
-
-  // ===== Pricing sample calculator (qty input) =====
-  const qty = document.getElementById("qty");
-  const qtyHint = document.getElementById("qtyHint");
-  const updateQtyHint = () => {
-    if (!qty || !qtyHint) return;
-    const mins = Math.max(1, Math.ceil(Number(qty.value) || 1));
-    const subtotal = mins * PRICE_PER_MIN;
-    qtyHint.textContent = `Example: ${mins} minutes → ${money(subtotal)}`;
-  };
-  if (qty) {
-    qty.addEventListener("input", updateQtyHint);
+  // =========================
+  // 4) Calculator (manual qty box)
+  // =========================
+  const qtyEl = $("qty");
+  if (qtyEl) {
+    const updateQtyHint = () => {
+      const mins = Math.max(1, Math.ceil(Number(qtyEl.value || 1)));
+      const hint = document.querySelector(".qtyHint");
+      if (hint) hint.textContent = `Example: ${mins} minutes → ${dollars(mins * PRICE_PER_MINUTE)}`;
+    };
+    qtyEl.addEventListener("input", updateQtyHint);
     updateQtyHint();
   }
 
-  // ===== Upload length detection + exact price =====
-  const fileInput = document.getElementById("fileInput");
-  const detectedEl = document.getElementById("detected");
-  const subtotalEl = document.getElementById("subtotal");
-  const totalEl = document.getElementById("total");
-  const startBtn = document.getElementById("startBtn");
-  const hintEl = document.getElementById("hint");
+  // =========================
+  // 5) Upload + detect duration + price (HERO estimator)
+  // =========================
+  const fileInput = $("fileInput");
+  const startBtn = $("startBtn");
 
-  const setText = (el, text) => {
-    if (el) el.textContent = text;
-  };
+  let uploadedKey = null;   // S3 object key returned by Lambda
+  let detectedSeconds = 0;  // duration detected in seconds
+  let detectedMinutes = 0;  // rounded up minutes
 
-  const setHint = (text) => {
-    if (hintEl) hintEl.textContent = text;
-  };
-
-  const resetEstimate = () => {
-    setText(detectedEl, "—");
-    setText(subtotalEl, money(0));
-    setText(totalEl, money(0));
-    setHint("Select an audio/video file and we’ll calculate the exact price before you pay.");
-  };
-
-  const updateEstimate = (seconds) => {
-    const mins = roundMinutes(seconds);
-    const subtotal = mins * PRICE_PER_MIN;
-
-    setText(detectedEl, `${formatDuration(seconds)}  (${mins} min billed)`);
-    setText(subtotalEl, money(subtotal));
-    setText(totalEl, money(subtotal));
-
-    setHint("Next: we’ll connect checkout + processing. For now this confirms your exact price.");
-  };
-
-  const loadDuration = (file) =>
-    new Promise((resolve, reject) => {
+  async function getMediaDurationSeconds(file) {
+    // Works for most audio/video in modern browsers.
+    // Note: some codecs may not report duration until enough data is read.
+    return new Promise((resolve, reject) => {
       const url = URL.createObjectURL(file);
-      const isVideo = (file.type || "").startsWith("video/");
-      const media = document.createElement(isVideo ? "video" : "audio");
-
+      const media = document.createElement(file.type.startsWith("video/") ? "video" : "audio");
       media.preload = "metadata";
       media.src = url;
 
@@ -144,53 +118,149 @@ document.addEventListener("DOMContentLoaded", () => {
       };
 
       media.onloadedmetadata = () => {
-        // Safari sometimes needs a tick
-        const duration = Number(media.duration);
+        const seconds = Number(media.duration);
         cleanup();
-        if (Number.isFinite(duration) && duration > 0) resolve(duration);
-        else reject(new Error("Could not detect duration"));
+        if (!Number.isFinite(seconds) || seconds <= 0) {
+          reject(new Error("Could not detect duration from this file."));
+          return;
+        }
+        resolve(seconds);
       };
 
       media.onerror = () => {
         cleanup();
-        reject(new Error("Could not load media"));
+        reject(new Error("Browser couldn't read this file type to detect duration."));
       };
     });
+  }
+
+  async function requestSignedUploadUrl(file) {
+    const res = await fetch(UPLOAD_LAMBDA_URL, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        fileName: file.name,
+        contentType: file.type || "application/octet-stream",
+        bytes: file.size || 0,
+      }),
+    });
+
+    if (!res.ok) {
+      const txt = await res.text().catch(() => "");
+      throw new Error(`Upload URL request failed (${res.status}). ${txt}`);
+    }
+
+    const data = await res.json();
+    if (!data.url || !data.key) throw new Error("Upload URL response missing url/key.");
+    return data; // { url, key }
+  }
+
+  async function uploadToS3(signedUrl, file) {
+    const put = await fetch(signedUrl, {
+      method: "PUT",
+      headers: {
+        "content-type": file.type || "application/octet-stream",
+      },
+      body: file,
+    });
+
+    if (!put.ok) {
+      const txt = await put.text().catch(() => "");
+      throw new Error(`S3 upload failed (${put.status}). ${txt}`);
+    }
+  }
+
+  function updateEstimateUI() {
+    // Show detected length + price
+    setText("detected", detectedMinutes ? `${detectedMinutes} minute(s)` : "—");
+    const subtotal = detectedMinutes * PRICE_PER_MINUTE;
+    setText("subtotal", dollars(subtotal));
+    setText("total", dollars(subtotal));
+  }
+
+  async function handleFileSelected(file) {
+    // Reset UI
+    uploadedKey = null;
+    detectedSeconds = 0;
+    detectedMinutes = 0;
+    updateEstimateUI();
+    setDisabled("startBtn", true);
+    setText("hint", "Working... detecting duration and uploading securely.");
+
+    // 1) Detect duration
+    detectedSeconds = await getMediaDurationSeconds(file);
+    detectedMinutes = roundUpMinutes(detectedSeconds);
+    updateEstimateUI();
+
+    // 2) Request signed URL
+    const { url, key } = await requestSignedUploadUrl(file);
+
+    // 3) Upload to S3
+    await uploadToS3(url, file);
+
+    // 4) Save key for later steps (checkout + AI job)
+    uploadedKey = key;
+
+    setText(
+      "hint",
+      `Uploaded ✅  Length: ${detectedMinutes} minute(s). You can continue.`
+    );
+    setDisabled("startBtn", false);
+
+    // Optional: store so refresh doesn't lose it
+    try {
+      localStorage.setItem("vn_uploadedKey", uploadedKey);
+      localStorage.setItem("vn_minutes", String(detectedMinutes));
+    } catch {}
+  }
+
+  // Restore from storage (optional)
+  try {
+    const savedKey = localStorage.getItem("vn_uploadedKey");
+    const savedMins = Number(localStorage.getItem("vn_minutes") || 0);
+    if (savedKey && savedMins > 0) {
+      uploadedKey = savedKey;
+      detectedMinutes = savedMins;
+      updateEstimateUI();
+      setText("hint", "Previous upload detected ✅ You can continue.");
+      setDisabled("startBtn", false);
+    }
+  } catch {}
 
   if (fileInput) {
-    fileInput.addEventListener("change", async () => {
-      const file = fileInput.files && fileInput.files[0];
-      if (!file) {
-        resetEstimate();
-        return;
-      }
-
-      setHint("Detecting length…");
+    fileInput.addEventListener("change", async (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
 
       try {
-        const seconds = await loadDuration(file);
-        updateEstimate(seconds);
+        await handleFileSelected(file);
       } catch (err) {
-        resetEstimate();
-        setHint("Couldn’t detect length for this file. Try an MP3/WAV/MP4, or re-export it and try again.");
+        console.error(err);
+        setText("hint", `Error: ${err.message}`);
+        setDisabled("startBtn", true);
       }
     });
   }
 
-  // ===== Get started button behavior =====
-  // If no file selected: opens file picker
-  // If file selected: stays on upload area (future: send to checkout)
+  // =========================
+  // 6) "Get started" button behavior (TEMP)
+  // =========================
+  // For now it just confirms we have uploadedKey + minutes.
+  // Next we will wire this to your Stripe checkout Lambda.
   if (startBtn) {
     startBtn.addEventListener("click", () => {
-      scrollToUpload();
-      const hasFile = fileInput?.files && fileInput.files.length > 0;
-
-      if (!hasFile) {
-        fileInput?.click();
+      if (!uploadedKey || !detectedMinutes) {
+        alert("Please upload a file first so we can calculate minutes.");
         return;
       }
 
-      setHint("Perfect — file detected. Next step is checkout + processing (we’ll add this logic next).");
+      // TEMP: show what we have
+      alert(
+        `Ready for checkout.\n\nMinutes: ${detectedMinutes}\nS3 Key: ${uploadedKey}\n\nNext step: connect this to Stripe checkout.`
+      );
     });
   }
+
+  // Initialize estimator UI
+  updateEstimateUI();
 });
