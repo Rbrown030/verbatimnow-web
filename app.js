@@ -1,34 +1,42 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // ===== Helpers =====
+  // ===== Constants =====
   const PRICE_PER_MIN = 0.5;
 
+  // ===== Helpers =====
   const money = (n) => {
     const x = Number(n) || 0;
     return `$${x.toFixed(2)}`;
   };
 
-  const clampMinutes = (n) => {
-    const x = Math.ceil(Number(n) || 0);
-    return x < 1 ? 1 : x;
+  // Round UP to nearest minute (minimum 1)
+  const roundMinutes = (seconds) => {
+    const mins = Math.ceil((Number(seconds) || 0) / 60);
+    return mins < 1 ? 1 : mins;
   };
 
-  const setText = (id, text) => {
-    const el = document.getElementById(id);
-    if (el) el.textContent = text;
+  const formatDuration = (seconds) => {
+    const s = Math.max(0, Math.floor(Number(seconds) || 0));
+    const m = Math.floor(s / 60);
+    const r = s % 60;
+    return m > 0 ? `${m}m ${String(r).padStart(2, "0")}s` : `${r}s`;
   };
 
-  const setDisabled = (id, disabled) => {
-    const el = document.getElementById(id);
-    if (el) el.disabled = !!disabled;
+  const scrollToUpload = () => {
+    const upload = document.getElementById("upload");
+    const fileInput = document.getElementById("fileInput");
+    if (upload) upload.scrollIntoView({ behavior: "smooth", block: "start" });
+    // Focus shortly after scroll so it's obvious
+    setTimeout(() => fileInput?.focus(), 350);
   };
 
   // ===== Footer year =====
   const yearEl = document.getElementById("year");
   if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-  // ===== Mobile menu =====
+  // ===== Mobile menu toggle =====
   const hamburger = document.querySelector(".hamburger");
   const mobileMenu = document.querySelector(".mobileMenu");
+
   if (hamburger && mobileMenu) {
     hamburger.addEventListener("click", () => {
       const isOpen = hamburger.getAttribute("aria-expanded") === "true";
@@ -44,8 +52,9 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // ===== Reveal animations =====
+  // ===== Reveal animations (fail-open) =====
   const items = Array.from(document.querySelectorAll(".reveal"));
+
   if (!("IntersectionObserver" in window)) {
     items.forEach((el) => el.classList.add("show"));
   } else {
@@ -60,135 +69,128 @@ document.addEventListener("DOMContentLoaded", () => {
       },
       { threshold: 0.15 }
     );
+
     items.forEach((el) => io.observe(el));
   }
 
-  // ===== Pricing qty calculator (pricing.html only) =====
+  // ===== Make ALL #upload links actually go to the upload box =====
+  document.querySelectorAll('a[href="#upload"]').forEach((a) => {
+    a.addEventListener("click", (e) => {
+      e.preventDefault();
+      scrollToUpload();
+    });
+  });
+
+  // ===== Pricing sample calculator (qty input) =====
   const qty = document.getElementById("qty");
-  const pricingStartLink = document.getElementById("pricingStartLink");
-
-  const updateQtyTotals = () => {
-    if (!qty) return;
-    const minutes = clampMinutes(qty.value);
-    qty.value = String(minutes);
-
-    const subtotal = minutes * PRICE_PER_MIN;
-    setText("subtotal", money(subtotal));
-    setText("total", money(subtotal));
-
-    // Optional: pass minutes to upload page as a hint (not required)
-    if (pricingStartLink) {
-      pricingStartLink.href = `/upload.html?minutes=${encodeURIComponent(minutes)}`;
-    }
+  const qtyHint = document.getElementById("qtyHint");
+  const updateQtyHint = () => {
+    if (!qty || !qtyHint) return;
+    const mins = Math.max(1, Math.ceil(Number(qty.value) || 1));
+    const subtotal = mins * PRICE_PER_MIN;
+    qtyHint.textContent = `Example: ${mins} minutes → ${money(subtotal)}`;
   };
-
   if (qty) {
-    qty.addEventListener("input", updateQtyTotals);
-    qty.addEventListener("change", updateQtyTotals);
-    updateQtyTotals();
+    qty.addEventListener("input", updateQtyHint);
+    updateQtyHint();
   }
 
-  // ===== File duration → minutes → price (index.html + upload.html) =====
+  // ===== Upload length detection + exact price =====
   const fileInput = document.getElementById("fileInput");
+  const detectedEl = document.getElementById("detected");
+  const subtotalEl = document.getElementById("subtotal");
+  const totalEl = document.getElementById("total");
   const startBtn = document.getElementById("startBtn");
+  const hintEl = document.getElementById("hint");
 
-  const updateFromMinutes = (minutes) => {
-    const m = clampMinutes(minutes);
-
-    setText("detected", `${m} min`);
-    const subtotal = m * PRICE_PER_MIN;
-    setText("subtotal", money(subtotal));
-    setText("total", money(subtotal));
-
-    setDisabled("startBtn", false);
-
-    // On homepage, "Get started" should go to upload page
-    // We keep it simple: take them to upload page with minutes as a hint
-    if (startBtn && startBtn.tagName === "BUTTON") {
-      startBtn.onclick = () => {
-        window.location.href = `/upload.html?minutes=${encodeURIComponent(m)}`;
-      };
-    }
+  const setText = (el, text) => {
+    if (el) el.textContent = text;
   };
 
-  const detectDuration = async (file) => {
-    // Try audio/video element metadata
-    return new Promise((resolve, reject) => {
+  const setHint = (text) => {
+    if (hintEl) hintEl.textContent = text;
+  };
+
+  const resetEstimate = () => {
+    setText(detectedEl, "—");
+    setText(subtotalEl, money(0));
+    setText(totalEl, money(0));
+    setHint("Select an audio/video file and we’ll calculate the exact price before you pay.");
+  };
+
+  const updateEstimate = (seconds) => {
+    const mins = roundMinutes(seconds);
+    const subtotal = mins * PRICE_PER_MIN;
+
+    setText(detectedEl, `${formatDuration(seconds)}  (${mins} min billed)`);
+    setText(subtotalEl, money(subtotal));
+    setText(totalEl, money(subtotal));
+
+    setHint("Next: we’ll connect checkout + processing. For now this confirms your exact price.");
+  };
+
+  const loadDuration = (file) =>
+    new Promise((resolve, reject) => {
       const url = URL.createObjectURL(file);
-      const media = document.createElement("audio");
+      const isVideo = (file.type || "").startsWith("video/");
+      const media = document.createElement(isVideo ? "video" : "audio");
+
       media.preload = "metadata";
       media.src = url;
 
       const cleanup = () => {
         URL.revokeObjectURL(url);
+        media.remove();
       };
 
       media.onloadedmetadata = () => {
-        const seconds = media.duration;
+        // Safari sometimes needs a tick
+        const duration = Number(media.duration);
         cleanup();
-        if (!isFinite(seconds) || seconds <= 0) {
-          reject(new Error("Could not read media duration."));
-          return;
-        }
-        resolve(seconds);
+        if (Number.isFinite(duration) && duration > 0) resolve(duration);
+        else reject(new Error("Could not detect duration"));
       };
 
       media.onerror = () => {
         cleanup();
-        reject(new Error("Unsupported file or metadata read failed."));
+        reject(new Error("Could not load media"));
       };
     });
-  };
 
   if (fileInput) {
     fileInput.addEventListener("change", async () => {
       const file = fileInput.files && fileInput.files[0];
-      if (!file) return;
+      if (!file) {
+        resetEstimate();
+        return;
+      }
 
-      // Reset UI
-      setText("detected", "Detecting…");
-      setText("subtotal", "$0.00");
-      setText("total", "$0.00");
-      setDisabled("startBtn", true);
+      setHint("Detecting length…");
 
       try {
-        const seconds = await detectDuration(file);
-        const minutes = Math.ceil(seconds / 60); // ✅ round up to nearest minute
-        updateFromMinutes(minutes);
+        const seconds = await loadDuration(file);
+        updateEstimate(seconds);
       } catch (err) {
-        setText("detected", "—");
-        setText("subtotal", "$0.00");
-        setText("total", "$0.00");
-        setDisabled("startBtn", true);
-
-        const hint = document.getElementById("hint");
-        if (hint) {
-          hint.textContent =
-            "Could not detect file length in the browser. Try a different file type (mp3/wav/mp4) or split the file.";
-        }
+        resetEstimate();
+        setHint("Couldn’t detect length for this file. Try an MP3/WAV/MP4, or re-export it and try again.");
       }
     });
   }
 
-  // If user arrives on upload.html with ?minutes=12, prefill display
-  const params = new URLSearchParams(window.location.search);
-  const minutesParam = params.get("minutes");
-  if (minutesParam && !fileInput) {
-    // if page has no file input, ignore
-  } else if (minutesParam && fileInput && !fileInput.files?.length) {
-    // Only prefill display if they haven't selected a file yet
-    const m = clampMinutes(minutesParam);
-    setText("detected", `${m} min`);
-    const subtotal = m * PRICE_PER_MIN;
-    setText("subtotal", money(subtotal));
-    setText("total", money(subtotal));
-    setDisabled("startBtn", false);
+  // ===== Get started button behavior =====
+  // If no file selected: opens file picker
+  // If file selected: stays on upload area (future: send to checkout)
+  if (startBtn) {
+    startBtn.addEventListener("click", () => {
+      scrollToUpload();
+      const hasFile = fileInput?.files && fileInput.files.length > 0;
 
-    if (startBtn && startBtn.tagName === "BUTTON") {
-      startBtn.onclick = () => {
-        // Placeholder for checkout later
-        alert("Checkout coming next. Your minutes: " + m);
-      };
-    }
+      if (!hasFile) {
+        fileInput?.click();
+        return;
+      }
+
+      setHint("Perfect — file detected. Next step is checkout + processing (we’ll add this logic next).");
+    });
   }
 });
