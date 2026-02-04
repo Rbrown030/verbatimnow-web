@@ -1,7 +1,8 @@
+
 /* ========= CONFIG ========= */
 // PUT YOUR REAL CREATE-CHECKOUT ENDPOINT HERE
-// Example: https://abcd1234.lambda-url.us-east-2.on.aws/
-const CHECKOUT_ENDPOINT = https://4sy2lrjhbqxuvdjobb3yq2l5xa0grbtj.lambda-url.us-east-1.on.aws/;
+// Example: https://abcd1234.lambda-url.us-east-1.on.aws/
+const CHECKOUT_ENDPOINT = "PASTE_YOUR_CREATE_CHECKOUT_URL_HERE";
 
 /* ========= PRICING ========= */
 const PRICE_PER_MIN = 0.50;
@@ -16,13 +17,11 @@ function formatDuration(seconds) {
   if (!Number.isFinite(seconds) || seconds <= 0) return "—";
   const mins = Math.floor(seconds / 60);
   const secs = Math.floor(seconds % 60);
-  const mm = String(mins);
   const ss = String(secs).padStart(2, "0");
-  return `${mm}:${ss}`;
+  return `${mins}:${ss}`;
 }
 
 async function getMediaDurationSeconds(file) {
-  // Use HTMLMediaElement metadata loading (no uploads needed)
   return new Promise((resolve, reject) => {
     const isVideo = (file.type || "").startsWith("video/");
     const el = document.createElement(isVideo ? "video" : "audio");
@@ -68,7 +67,6 @@ document.addEventListener("DOMContentLoaded", () => {
       mobileMenu.hidden = expanded;
     });
 
-    // Close menu on click
     mobileMenu.addEventListener("click", (e) => {
       const a = e.target.closest("a");
       if (!a) return;
@@ -77,9 +75,12 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Reveal animations (safe/no-op if .reveal not present)
+  // ✅ UNBLUR GUARANTEE: always show reveal elements immediately
   const reveals = document.querySelectorAll(".reveal");
-  if (reveals.length) {
+  reveals.forEach((el) => el.classList.add("in"));
+
+  // Optional: keep observer for animation (won't ever block visibility)
+  if (reveals.length && "IntersectionObserver" in window) {
     const io = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -106,7 +107,6 @@ document.addEventListener("DOMContentLoaded", () => {
   let currentFile = null;
 
   function updateUI() {
-    // Display detected length as mm:ss + minutes
     if (detectedSeconds > 0 && detectedMinutes > 0) {
       detectedEl.textContent = `${formatDuration(detectedSeconds)} (${detectedMinutes} min)`;
     } else {
@@ -130,7 +130,6 @@ document.addEventListener("DOMContentLoaded", () => {
     detectedMinutes = 0;
     detectedSeconds = 0;
     updateUI();
-
     if (!file) return;
 
     try {
@@ -140,8 +139,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const seconds = await getMediaDurationSeconds(file);
       detectedSeconds = seconds;
 
-      // IMPORTANT: We use CEIL minutes so you never undercharge for partial minutes.
-      // If your backend supports decimal minutes, we can switch to exact decimals later.
+      // Charge by started minute (safe + common)
       detectedMinutes = Math.max(1, Math.ceil(seconds / 60));
 
       updateUI();
@@ -163,7 +161,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   startBtn.addEventListener("click", async () => {
     try {
-      // If no file, open picker first (nice UX)
       if (!currentFile) {
         fileInput.click();
         alert("Please upload a file first so we can calculate minutes.");
@@ -176,7 +173,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       if (!CHECKOUT_ENDPOINT || CHECKOUT_ENDPOINT.includes("PASTE_YOUR_CREATE_CHECKOUT_URL_HERE")) {
-        alert("Checkout endpoint not set. Paste your create-checkout URL into app.js (CHECKOUT_ENDPOINT).");
+        alert("Checkout endpoint not set. Paste your create-checkout Function URL into app.js (CHECKOUT_ENDPOINT).");
         return;
       }
 
@@ -185,7 +182,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const payload = {
         minutes: detectedMinutes,
-        // optional context (safe to include)
         filename: currentFile.name || "",
         mimeType: currentFile.type || ""
       };
@@ -197,13 +193,8 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
       const data = await res.json().catch(() => ({}));
-      if (!res.ok) {
-        throw new Error(data.error || `Checkout failed (${res.status})`);
-      }
-
-      if (!data.url) {
-        throw new Error("Checkout failed: missing redirect URL.");
-      }
+      if (!res.ok) throw new Error(data.error || `Checkout failed (${res.status})`);
+      if (!data.url) throw new Error("Checkout failed: missing redirect URL.");
 
       window.location.href = data.url;
     } catch (err) {
@@ -215,6 +206,5 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Initial paint
   updateUI();
 });
