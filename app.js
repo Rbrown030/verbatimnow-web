@@ -1,8 +1,6 @@
-
 /* ========= CONFIG ========= */
-// PUT YOUR REAL CREATE-CHECKOUT ENDPOINT HERE
-// Example: https://abcd1234.lambda-url.us-east-1.on.aws/
-const CHECKOUT_ENDPOINT = https://3ydz2dudmxq7ksgd2nzvdp5hpq0xlypt.lambda-url.us-east-2.on.aws/;
+// Your Stripe checkout Lambda Function URL:
+const CHECKOUT_ENDPOINT = "https://3ydz2dudmxq7ksgd2nzvdp5hpq0xlypt.lambda-url.us-east-2.on.aws/";
 
 /* ========= PRICING ========= */
 const PRICE_PER_MIN = 0.50;
@@ -51,13 +49,13 @@ async function getMediaDurationSeconds(file) {
   });
 }
 
-/* ========= UI ========= */
+/* ========= MAIN ========= */
 document.addEventListener("DOMContentLoaded", () => {
-  // Footer year
+  // Year
   const yearEl = document.getElementById("year");
   if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-  // Mobile menu
+  // Mobile menu toggle (safe no-op if not present)
   const hamburger = document.querySelector(".hamburger");
   const mobileMenu = document.querySelector(".mobileMenu");
   if (hamburger && mobileMenu) {
@@ -75,22 +73,8 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // ✅ UNBLUR GUARANTEE: always show reveal elements immediately
-  const reveals = document.querySelectorAll(".reveal");
-  reveals.forEach((el) => el.classList.add("in"));
-
-  // Optional: keep observer for animation (won't ever block visibility)
-  if (reveals.length && "IntersectionObserver" in window) {
-    const io = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) entry.target.classList.add("in");
-        });
-      },
-      { threshold: 0.12 }
-    );
-    reveals.forEach((el) => io.observe(el));
-  }
+  // ✅ FIX BLUR FOREVER: always show reveal elements
+  document.querySelectorAll(".reveal").forEach((el) => el.classList.add("in"));
 
   // Estimator elements
   const fileInput = document.getElementById("fileInput");
@@ -100,7 +84,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const startBtn = document.getElementById("startBtn");
   const hintEl = document.getElementById("hint");
 
-  if (!fileInput || !detectedEl || !subtotalEl || !totalEl || !startBtn) return;
+  if (!fileInput || !detectedEl || !subtotalEl || !totalEl || !startBtn) {
+    return;
+  }
 
   let detectedMinutes = 0;
   let detectedSeconds = 0;
@@ -130,10 +116,12 @@ document.addEventListener("DOMContentLoaded", () => {
     detectedMinutes = 0;
     detectedSeconds = 0;
     updateUI();
+
     if (!file) return;
 
     try {
       startBtn.disabled = true;
+      startBtn.textContent = "Calculating…";
       if (hintEl) hintEl.textContent = "Reading file length…";
 
       const seconds = await getMediaDurationSeconds(file);
@@ -151,6 +139,7 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error(err);
     } finally {
       startBtn.disabled = false;
+      startBtn.textContent = "Continue to payment";
     }
   }
 
@@ -172,8 +161,8 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      if (!CHECKOUT_ENDPOINT || CHECKOUT_ENDPOINT.includes("PASTE_YOUR_CREATE_CHECKOUT_URL_HERE")) {
-        alert("Checkout endpoint not set. Paste your create-checkout Function URL into app.js (CHECKOUT_ENDPOINT).");
+      if (!CHECKOUT_ENDPOINT || !CHECKOUT_ENDPOINT.startsWith("https://")) {
+        alert("Checkout endpoint not set correctly.");
         return;
       }
 
