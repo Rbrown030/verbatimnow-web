@@ -1,7 +1,7 @@
 /* ========= CONFIG ========= */
 // PUT YOUR REAL CREATE-CHECKOUT ENDPOINT HERE
 // Example: https://abcd1234.lambda-url.us-east-2.on.aws/
-const CHECKOUT_ENDPOINT = "PASTE_YOUR_CREATE_CHECKOUT_URL_HERE";
+const CHECKOUT_ENDPOINT = https://4sy2lrjhbqxuvdjobb3yq2l5xa0grbtj.lambda-url.us-east-1.on.aws/;
 
 /* ========= PRICING ========= */
 const PRICE_PER_MIN = 0.50;
