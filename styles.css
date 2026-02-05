@@ -401,3 +401,35 @@ h1{
   .mobileMenu{display:block}
   .grid3{grid-template-columns:1fr}
 }
+/* ==== EMERGENCY OVERRIDE: disable blur/hidden reveal states site-wide ==== */
+.reveal,
+.reveal:not(.in),
+.heroCopy,
+.heroCard,
+.sectionHead,
+.feature,
+.step,
+.review,
+.faq details,
+.pill,
+.trustRow,
+.grid3,
+.steps,
+.callout,
+.pricingWrap,
+.pricingCard,
+.pricingSide {
+  opacity: 1 !important;
+  transform: none !important;
+  filter: none !important;
+  backdrop-filter: none !important;
+}
+
+/* If anything upstream applies blur to a parent/container */
+.hero,
+.section,
+main,
+body,
+html {
+  filter: none !important;
+}
