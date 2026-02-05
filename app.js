@@ -214,6 +214,5 @@ document.addEventListener("DOMContentLoaded", () => {
     updateQtyHint();
   }
 
-
   updateUI();
 });
