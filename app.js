@@ -194,6 +194,26 @@ document.addEventListener("DOMContentLoaded", () => {
       startBtn.textContent = "Continue to payment";
     }
   });
+    /* ========= MANUAL PRICING TESTER (#qty) ========= */
+  const qtyInput = document.getElementById("qty");
+  const qtyHint = document.getElementById("qtyHint");
+
+  function updateQtyHint() {
+    if (!qtyInput || !qtyHint) return;
+
+    const minutes = Math.max(1, Math.floor(Number(qtyInput.value || 0)));
+    qtyInput.value = String(minutes);
+
+    const subtotal = minutes * PRICE_PER_MIN;
+    qtyHint.textContent = `Example: ${minutes} minutes → ${formatMoney(subtotal)}`;
+  }
+
+  if (qtyInput && qtyHint) {
+    qtyInput.addEventListener("input", updateQtyHint);
+    qtyInput.addEventListener("change", updateQtyHint);
+    updateQtyHint();
+  }
+
 
   updateUI();
 });
